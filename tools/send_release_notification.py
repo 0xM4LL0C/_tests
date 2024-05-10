@@ -20,8 +20,8 @@ def send_release_notification():
     release_version = os.getenv("GITHUB_REF").split("/")[-1]
     release = get_github_release_info(release_version) # type: dict
         
-    message = (f"**{release.get('name')}**\n\n"
-               f"_{release.get('body')}_")
+    message = (f"*{release.get('name')}*\n\n"
+               f"{release.get('body')}")
     
     markup = quick_markup({
         "Релиз": {"url": release.get("html_url")}
