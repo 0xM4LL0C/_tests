@@ -22,8 +22,8 @@ def send_release_notification():
     message = (f"<b>{release.get('name')}</b>\n\n"
                f"<i>{release.get('body')}</i>")
     
-    bot = TeleBot(bot_token)
-    bot.send_message(chat_id=chat_id, text=message)
+    bot = TeleBot(bot_token, parse_mode="html")
+    bot.send_message(chat_id, message)
 
 if __name__ == "__main__":
     send_release_notification()
