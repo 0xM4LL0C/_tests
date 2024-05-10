@@ -19,10 +19,10 @@ def send_release_notification():
     release_version = os.getenv("GITHUB_REF").split("/")[-1]
     release = get_github_release_info(release_version) # type: dict
         
-    message = (f"<b>{release.get('name')}</b>\n\n"
+    message = (f"**{release.get('name')}**\n\n"
                f"<i>{release.get('body')}</i>")
     
-    bot = TeleBot(bot_token, parse_mode="html")
+    bot = TeleBot(bot_token, parse_mode="markdown")
     bot.send_message(chat_id, message)
 
 if __name__ == "__main__":
