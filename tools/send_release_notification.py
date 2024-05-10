@@ -7,9 +7,9 @@ def send_release_notification():
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("CHAT_ID")
     release_type = os.getenv("GITHUB_EVENT_NAME")
-    release_version = os.getenv("GITHUB_REF")
+    release_version = os.getenv("GITHUB_REF").split("/")[-1]
     release_text = os.getenv("RELEASE_BODY")
-    release_url = os.getenv("GITHUB_SERVER_URL") + os.getenv("GITHUB_REPOSITORY") + "/releases/" + os.getenv("GITHUB_RUN_ID")
+    release_url = f"{os.getenv('GITHUB_SERVER_URL')}/{os.getenv('GITHUB_REPOSITORY')}/releases/{os.getenv('GITHUB_RUN_ID')}"
 
     message = f"{release_type} {release_version}\n\n{release_text}\n\n{release_url}"
     
