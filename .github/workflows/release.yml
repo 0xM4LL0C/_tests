@@ -51,12 +51,9 @@ jobs:
         draft: false
         prerelease: ${{ steps.get_release_type.outputs.release_type != 'none' }}
 
-    # - name: Upload Release Asset
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: path/to/your/asset
-    #     asset_name: name-of-your-asset
-    #     asset_content_type: application/octet-stream
+    - uses: dropseed/changerelease@v1
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        # optional
+        tag_prefix: v
+        changelog: CHANGELOG.md
