@@ -3,6 +3,7 @@ name: Release on Tag
 on:
   push:
     tags:
+      - 'v*.*.*'
       - 'v*.*.*-alpha'
       - 'v*.*.*-beta'
       - 'v*.*.*-prerelease'
