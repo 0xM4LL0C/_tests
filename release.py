@@ -33,7 +33,7 @@ prerelease = False
 
 def on_exit():
     try:
-        run_command("git shitch dev")
+        run_command("git switch dev")
     except Exception as e:
         print(e)
 atexit.register(on_exit)
