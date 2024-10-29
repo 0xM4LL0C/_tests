@@ -64,6 +64,7 @@ except Exception:
 with open("version", "w") as f:
     f.write(str(version))
 
+run_command("git add .")
 run_command('git commit -a -m "bump version"')
 run_command(f"git push -u origin release-v{version}")
 
