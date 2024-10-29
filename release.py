@@ -45,18 +45,25 @@ match sys.argv[1].lower():
     case "build":
         version = version.bump_build()
 
-run_command(f"git checkout -b release-v{version}")
-run_command("make fix && make lint && make format")
-run_command('git commit -a -m "bump version"')
-run_command(f"git push -u origin release-v{version}")
+head = repo.create_head(f"release-v{version}")
+head.checkout()
+run_command("git status")
 
+
+with open("version", "w") as f:
+    f.write(str(version))
+
+repo.index.add(["."])
+repo.index.commit("test bump")
 # Создаём pull request для релиза
-run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
+run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматическое создание PR для релиза версии {version}"')
 
-# Автоматически мержим pull request
-run_command(f'gh pr merge release-v{version} --merge --delete-branch')
+# Мержим pull request в main (автоматически)
+run_command('gh pr merge --squash --auto --delete-branch')
 
-# Создаём релиз
+# Создаём релиз на GitHub после слияния pull request
 run_command(f'gh release create v{version} --notes-file release_body.md {"-p" if prerelease else ""} --title v{version}')
 
-print("Релиз успешно создан и pull request автоматически смержен.")
+
+
+print("Релиз успешно создан и опубликован.")
