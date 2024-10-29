@@ -3,6 +3,8 @@ import sys
 from semver import Version
 import git
 
+# cspell: disable
+
 repo = git.Repo()
 
 tags = repo.tags
