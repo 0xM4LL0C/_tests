@@ -1,3 +1,4 @@
+import atexit
 import subprocess
 import sys
 from semver import Version
@@ -30,8 +31,12 @@ def run_command(command: str):
 prerelease = False
 
 
-
-
+def on_exit():
+    try:
+        run_command("git shitch dev")
+    except Exception as e:
+        print(e)
+atexit.register(on_exit)
 
 
 match sys.argv[1].lower():
