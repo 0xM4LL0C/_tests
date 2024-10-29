@@ -72,7 +72,7 @@ run_command(f"git push -u origin release-v{version}")
 run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
 
 # Автоматически мержим pull request
-run_command(f'gh pr merge release-v{version} --merge --delete-branch')
+run_command(f'gh pr merge release-v{version} --merge --auto --delete-branch')
 
 # Создаём релиз
 run_command(f'gh release create v{version} --generate-notes {"-p" if prerelease else ""} --title v{version}')
