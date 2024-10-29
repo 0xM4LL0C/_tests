@@ -1,6 +1,7 @@
 import atexit
 import subprocess
 import sys
+from typing import Literal
 from semver import Version
 import git
 
@@ -20,13 +21,16 @@ version = Version.parse(tag.name.replace("v", "", 1))
 
 
 
-def run_command(command: str):
+def run_command(command: str, mode: Literal["exit", "raise"] = "exit"):
     """Выполняет команду в shell и завершает скрипт при ошибке"""
     try:
         subprocess.run(command, shell=True, check=True)
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        if mode == "raise":
+            raise e
         print(f"\n\nКоманда '{command}' завершилась с ошибкой.")
         sys.exit(1)
+
 
 prerelease = False
 
@@ -53,7 +57,7 @@ match sys.argv[1].lower():
         version = version.bump_build()
 
 try:
-    run_command(f"git checkout -b release-v{version}")
+    run_command(f"git checkout -b release-v{version}", "raise")
 except Exception:
     run_command(f"git swhtch release-v{version}")
 
