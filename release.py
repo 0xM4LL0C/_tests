@@ -48,7 +48,7 @@ match sys.argv[1].lower():
         version = version.bump_build()
 
 run_command(f"git checkout -b release-v{version}")
-run_command("make fix && make lint && make format")
+
 run_command('git commit -a -m "bump version"')
 run_command(f"git push -u origin release-v{version}")
 
@@ -59,6 +59,6 @@ run_command(f'gh pr create --base main --head release-v{version} --title "Releas
 run_command(f'gh pr merge release-v{version} --merge --delete-branch')
 
 # Создаём релиз
-run_command(f'gh release create v{version} --notes-file release_body.md {"-p" if prerelease else ""} --title v{version}')
+run_command(f'gh release create v{version} --generate-notes {"-p" if prerelease else ""} --title v{version}')
 
 print("Релиз успешно создан и pull request автоматически смержен.")
