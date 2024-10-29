@@ -1,4 +1,5 @@
 import atexit
+import os
 import subprocess
 import sys
 from typing import Literal
@@ -20,7 +21,8 @@ version = Version.parse(tag.name.replace("v", "", 1))
 def run_command(command: str, mode: Literal["exit", "raise"] = "exit"):
     """Выполняет команду в shell и завершает скрипт при ошибке"""
     try:
-        subprocess.run(command, shell=True, check=True)
+        # subprocess.run(command, shell=True, check=True)
+        os.system(command)
     except subprocess.CalledProcessError as e:
         if mode == "raise":
             raise e
