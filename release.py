@@ -4,7 +4,7 @@ from semver import Version
 import git
 
 tags = git.Repo().tags
-print(tags)
+
 
 
 tag = list(filter(lambda t: t.name.startswith("v"), tags))[-1]
@@ -20,7 +20,7 @@ def run_command(command: str):
     try:
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError:
-        print(f"Команда '{command}' завершилась с ошибкой.")
+        print(f"\n\nКоманда '{command}' завершилась с ошибкой.")
         sys.exit(1)
 
 prerelease = False
