@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 from typing import Literal
+from unittest import result
 from semver import Version
 import git
 
@@ -21,12 +22,12 @@ version = Version.parse(tag.name.replace("v", "", 1))
 def run_command(command: str, mode: Literal["exit", "raise"] = "exit"):
     """Выполняет команду в shell и завершает скрипт при ошибке"""
     try:
-        # subprocess.run(command, shell=True, check=True)
-        os.system(command)
-    except subprocess.CalledProcessError as e:
+        if result := os.system(command):
+            raise Exception(result)
+    except Exception as e:
         if mode == "raise":
             raise e
-        print(f"\n\nКоманда '{command}' завершилась с ошибкой.")
+        print(f"\n\nКоманда \"{command}\" завершилась с ошибкой.")
         sys.exit(1)
 
 
@@ -41,7 +42,6 @@ def on_exit():
 
 
 atexit.register(on_exit)
-
 
 match sys.argv[1].lower():
     case "major":
@@ -74,8 +74,7 @@ run_command(
     f'gh release create v{version} --target main --generate-notes {"-p" if prerelease else ""} --title v{version}'
 )
 
-print("Релиз успешно создан и опубликован.")
 
-print("Релиз успешно создан и pull request автоматически смержен.")
-run_command("git switch dev")
+print("\n\nРелиз успешно создан и опубликован.\n\n")
+# run_command("git switch dev")
 run_command("git fetch --tags")
