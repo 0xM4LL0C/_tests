@@ -54,10 +54,7 @@ match sys.argv[1].lower():
     case "build":
         version = version.bump_build()
 
-try:
-    run_command(f"git checkout -b release-v{version}", "raise")
-except Exception:
-    run_command(f"git switch release-v{version}")
+run_command("git switch dev")
 
 with open("version", "w") as f:
     f.write(str(version))
