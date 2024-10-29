@@ -68,7 +68,7 @@ run_command("git switch main")
 
 run_command(f'gh pr create --base main --head dev --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
 
-run_command('gh pr merge dev --delete-branch')
+run_command('gh pr merge dev')
 
 run_command(
     f'gh release create v{version} --target main --generate-notes {"-p" if prerelease else ""} --title v{version}'
