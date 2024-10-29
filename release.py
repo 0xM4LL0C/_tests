@@ -48,7 +48,7 @@ match sys.argv[1].lower():
         version = version.bump_build()
 
 run_command(f"git checkout -b release-v{version}")
-run_command("make fix && make lint && make format")
+
 run_command('git commit -a -m "bump version"')
 run_command(f"git push -u origin release-v{version}")
 
