@@ -64,9 +64,9 @@ run_command("git status")
 run_command('git add . && git commit -a -m "bump version" && git push')
 run_command("git switch main")
 
-run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
+run_command(f'gh pr create --base main --head dev --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
 
-run_command(f'gh pr merge release-v{version} --merge --delete-branch')
+run_command('gh pr merge dev --merge --delete-branch')
 
 run_command(
     f'gh release create v{version} --target main --generate-notes {"-p" if prerelease else ""} --title v{version}'
