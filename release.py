@@ -49,12 +49,12 @@ head = repo.create_head(f"release-v{version}")
 head.checkout()
 run_command("git status")
 
-repo.index.add(["."])
-repo.index.commit("test bump")
 
 with open("version", "w") as f:
     f.write(str(version))
 
+repo.index.add(["."])
+repo.index.commit("test bump")
 # Создаём pull request для релиза
 run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматическое создание PR для релиза версии {version}"')
 
@@ -63,5 +63,7 @@ run_command('gh pr merge --squash --auto --delete-branch')
 
 # Создаём релиз на GitHub после слияния pull request
 run_command(f'gh release create v{version} --notes-file release_body.md {"-p" if prerelease else ""} --title v{version}')
+
+
 
 print("Релиз успешно создан и опубликован.")
