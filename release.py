@@ -3,7 +3,9 @@ import sys
 from semver import Version
 import git
 
-tags = git.Repo().tags
+repo = git.Repo()
+
+tags = repo.tags
 
 
 
@@ -43,6 +45,15 @@ match sys.argv[1].lower():
     case "build":
         version = version.bump_build()
 
+head = repo.create_head(f"release-v{version}")
+head.checkout()
+run_command("git status")
+
+repo.index.add(["."])
+repo.index.commit("test bump")
+
+with open("version", "w") as f:
+    f.write(str(version))
 
 # Создаём pull request для релиза
 run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматическое создание PR для релиза версии {version}"')
