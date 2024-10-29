@@ -59,6 +59,8 @@ run_command("git switch dev")
 with open("version", "w") as f:
     f.write(str(version))
 
+run_command("git status")
+
 run_command('git add . && git commit -a -m "bump version" && git push')
 run_command("git switch main")
 
