@@ -61,7 +61,7 @@ try:
 except Exception:
     run_command(f"git switch release-v{version}")
 
-with open("version") as f:
+with open("version", "w") as f:
     f.write(str(version))
 
 run_command('git commit -a -m "bump version"')
