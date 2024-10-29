@@ -1,9 +1,7 @@
 import atexit
 import os
-import subprocess
 import sys
 from typing import Literal
-from unittest import result
 from semver import Version
 import git
 
@@ -20,7 +18,6 @@ version = Version.parse(tag.name.replace("v", "", 1))
 
 
 def run_command(command: str, mode: Literal["exit", "raise"] = "exit"):
-    """Выполняет команду в shell и завершает скрипт при ошибке"""
     try:
         if result := os.system(command):
             raise Exception(result)
