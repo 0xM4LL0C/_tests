@@ -64,7 +64,7 @@ run_command("git switch main")
 
 
 run_command(
-    f'gh release create v{version} --notes-file release_body.md {"-p" if prerelease else ""} --title v{version}'
+    f'gh release create v{version} --generate-notes {"-p" if prerelease else ""} --title v{version}'
 )
 
 print("Релиз успешно создан и опубликован.")
