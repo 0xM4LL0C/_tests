@@ -1,5 +1,7 @@
-import subprocess
+import atexit
+import os
 import sys
+from typing import Literal
 from semver import Version
 import git
 
@@ -10,29 +12,33 @@ repo = git.Repo()
 tags = repo.tags
 
 
-
 tag = list(filter(lambda t: t.name.startswith("v"), tags))[-1]
 
 version = Version.parse(tag.name.replace("v", "", 1))
 
 
-
-
-
-def run_command(command: str):
-    """Выполняет команду в shell и завершает скрипт при ошибке"""
+def run_command(command: str, mode: Literal["exit", "raise"] = "exit"):
     try:
-        subprocess.run(command, shell=True, check=True)
-    except subprocess.CalledProcessError:
-        print(f"\n\nКоманда '{command}' завершилась с ошибкой.")
+        if result := os.system(command):
+            raise Exception(result)
+    except Exception as e:
+        if mode == "raise":
+            raise e
+        print(f"\n\nКоманда \"{command}\" завершилась с ошибкой.")
         sys.exit(1)
+
 
 prerelease = False
 
 
+def on_exit():
+    try:
+        run_command("git switch dev")
+    except Exception as e:
+        print(e)
 
 
-
+atexit.register(on_exit)
 
 match sys.argv[1].lower():
     case "major":
@@ -47,18 +53,25 @@ match sys.argv[1].lower():
     case "build":
         version = version.bump_build()
 
-run_command(f"git checkout -b release-v{version}")
+run_command("git switch dev")
 
-run_command('git commit -a -m "bump version"')
-run_command(f"git push -u origin release-v{version}")
+with open("version", "w") as f:
+    f.write(str(version))
 
-# Создаём pull request для релиза
-run_command(f'gh pr create --base main --head release-v{version} --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
 
-# Автоматически мержим pull request
-run_command(f'gh pr merge release-v{version} --merge --delete-branch')
+run_command('git add . && git commit -a -m "bump version" && git push')
 
-# Создаём релиз
-run_command(f'gh release create v{version} --notes-file release_body.md {"-p" if prerelease else ""} --title v{version}')
+run_command("git switch main")
 
-print("Релиз успешно создан и pull request автоматически смержен.")
+run_command(f'gh pr create --base main --head dev --title "Release v{version}" --body "Автоматический PR для релиза версии {version}"')
+
+run_command('gh pr merge dev')
+
+run_command(
+    f'gh release create v{version} --target main --generate-notes {"-p" if prerelease else ""} --title v{version}'
+)
+
+
+print("\n\nРелиз успешно создан и опубликован.\n\n")
+# run_command("git switch dev")
+run_command("git fetch --tags")
