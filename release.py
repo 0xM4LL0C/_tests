@@ -59,7 +59,7 @@ match sys.argv[1].lower():
 try:
     run_command(f"git checkout -b release-v{version}", "raise")
 except Exception:
-    run_command(f"git swhtch release-v{version}")
+    run_command(f"git switch release-v{version}")
 
 run_command('git commit -a -m "bump version"')
 run_command(f"git push -u origin release-v{version}")
