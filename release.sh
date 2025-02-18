@@ -1,5 +1,5 @@
 printf "Tag: "
-tag=$(read)
+read tag
 
 ./build.sh main.go
-gh release create $tag --notes "precompiled bins" bin/app/*
+gh release create $tag --generate-notes bin/app/*
