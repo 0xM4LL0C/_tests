@@ -1,0 +1,59 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64, riscv64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up cross-compilers
+        run: |
+          sudo apt-get update
+          case "${{ matrix.arch }}" in
+            x86_64)  sudo apt-get install -y gcc ;;
+            aarch64) sudo apt-get install -y gcc-aarch64-linux-gnu ;;
+            riscv64) sudo apt-get install -y gcc-riscv64-linux-gnu ;;
+          esac
+
+      - name: Build
+        run: |
+          case "${{ matrix.arch }}" in
+            x86_64)  make CC=gcc ;;
+            aarch64) make CC=aarch64-linux-gnu-gcc BIN_NAME=app-${{ matrix.arch }} ;;
+            riscv64) make CC=riscv64-linux-gnu-gcc BIN_NAME=app-${{ matrix.arch }} ;;
+          esac
+          mkdir -p artifacts
+          cp .build/app* artifacts/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.arch }}
+          path: artifacts/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release_artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
