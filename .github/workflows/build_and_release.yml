@@ -39,7 +39,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: binaries-${{ matrix.arch }}
+          name: app-${{ matrix.arch }}
           path: artifacts/
 
   release:
@@ -56,4 +56,4 @@ jobs:
         with:
           files: release_artifacts/**/*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
